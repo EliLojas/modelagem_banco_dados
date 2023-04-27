@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  postgres_oni9:
+    image: postgres:15.1-alpine
+    container_name: postgres
+    hostname: postgres_oni9
+    restart: unless-stopped
+    environment:
+      TZ: "America/Sao_Paulo"
+      PGTZ: "America/Sao_Paulo"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: oni9
+      PGDATA: /var/lib/postgresql/data/pgfree
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+      POSTGRES_NON_ROOT_USER: ${POSTGRES_USER}
+      POSTGRES_NON_ROOT_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.storage/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - local
+    command: [ "postgres", "-c", "log_statement=all" ]
+
+networks:
+  local:
+    driver: bridge
