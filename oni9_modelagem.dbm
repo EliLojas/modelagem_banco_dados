@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="33"
+	 default-owner="postgres"
+	 layers="Exemplos,Administração do Sistema,Administração do Estoque,Cliente e Fornecedor,Contas a Receber e a Pagar,Caixa e Banco"
+	 active-layers="0,1,2,3,4,5"
+	 layer-name-colors="#000000,#000000,#000000,#000000,#000000,#000000"
+	 layer-rect-colors="#7edcad,#810558,#3eb9ee,#ce9c68,#0f7013,#e20dd0"
+	 show-layer-names="false" show-layer-rects="false">
+<database name="oni9" encoding="UTF8" lc-collate="C" lc-ctype="C" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="logger_tabela" layers="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="postgres"/>
+	<comment> <![CDATA[Schema para armazenar todos os registros de logs que serão produzidos pela aplicação e pelo banco de dados.]]> </comment>
+</schema>
+
+<domain name="dm_id" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="bigint" length="0"/>
+</domain>
+
+<domain name="dm_serial" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="bigserial" length="0"/>
+</domain>
+
+<domain name="dm_nascimento" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="date" length="0"/>
+</domain>
+
+<domain name="dm_criado_em" not-null="true" default-value="timezone('utc', current_TIMESTAMP)">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	<type name="timestamptz" length="0"/>
+</domain>
+
+<domain name="dm_uuid" not-null="false" default-value="gen_random_uuid()">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	<type name="uuid" length="0"/>
+</domain>
+
+<domain name="dm_usuario_banco" not-null="false" default-value="current_user">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Usuário do banco de dados que criou o registro. Lembrando que o nome de usuário de banco de dados não pode ultrapassar 100 caracteres.]]> </comment>
+	<type name="varchar" length="100"/>
+</domain>
+
+<domain name="dm_data_hora" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="timestamptz" length="0"/>
+</domain>
+
+<domain name="dm_administrador" not-null="true" default-value="true">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="boolean" length="0"/>
+</domain>
+
+<domain name="dm_telefone" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="9"/>
+</domain>
+
+<domain name="dm_telefone_codigo_area" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="3"/>
+</domain>
+
+<domain name="dm_telefone_codigo_pais" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="4"/>
+</domain>
+
+<domain name="dm_codigo_barra" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="20"/>
+</domain>
+
+<domain name="dm_cpf_cnpj" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="18"/>
+</domain>
+
+<domain name="dm_descricao" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="70"/>
+</domain>
+
+<domain name="dm_descricao_longa" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="160"/>
+</domain>
+
+<domain name="dm_email" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="254"/>
+</domain>
+
+<domain name="dm_ativo" not-null="true" default-value="true">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="boolean" length="0"/>
+</domain>
+
+<domain name="dm_nome_arquivo" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="10"/>
+</domain>
+
+<domain name="dm_sim_nao" not-null="true" default-value="true">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="boolean" length="0"/>
+</domain>
+
+<domain name="dm_nome" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="160"/>
+</domain>
+
+<domain name="dm_tipo" not-null="false" default-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="smallint" length="0"/>
+	<constraint name="numero positivo" type="check">
+		<expression> <![CDATA[value >= 0]]> </expression>
+	</constraint>
+</domain>
+
+<domain name="dm_valor_monetario" not-null="true" default-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Usado em campos de valores monetários.]]> </comment>
+	<type name="double precision" length="0"/>
+</domain>
+
+<domain name="dm_percentual" not-null="true" default-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Usado em campo de percentuais ou fatores.]]> </comment>
+	<type name="double precision" length="0"/>
+</domain>
+
+<domain name="dm_observacao" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="text" length="0"/>
+</domain>
+
+<domain name="dm_senha_hash" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="128"/>
+</domain>
+
+<domain name="dm_log" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="jsonb" length="0"/>
+</domain>
+
+<domain name="dm_char_1" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="char" length="1"/>
+</domain>
+
+<domain name="dm_tipo_arquivo" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Qual é o tipo do arquivo adicionado. T = Tabela. C = Consulta. P = Programa. R = Relatório.]]> </comment>
+	<type name="char" length="1"/>
+	<constraint name="tipo_arquivo" type="check">
+		<expression> <![CDATA[VALUE IN('T', 'C', 'P', 'R')]]> </expression>
+	</constraint>
+</domain>
+
+<function name="fun_trg_gera_logger_todas_tabelas"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Função para salvar todas as alterações de dados que uma tabela sofrer.
+Essas alterações podem ser de atualização e deleção de registros.]]> </comment>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[DECLARE
+	TIPO_LOG CHAR(1) := '';
+	ARQUIVO RECORD := NULL;
+	ID_REGISTRO_AFETADO bigint;
+
+BEGIN
+		/* Consulta na tabela ASTARQUI para verificar se a tabela que disparou a trigger não precisa registrar log. */
+		SELECT log_alteracao, log_delecao, salva_id_deletado
+			INTO ARQUIVO
+			FROM astarqui WHERE nome_arquivo = TG_RELNAME;
+		
+		/* Pega o tipo de operação (Insert, Update, Delete). */
+		TIPO_LOG = substring(TG_OP, 1, 1);
+		
+		IF TIPO_LOG = 'D' THEN
+			
+			ID_REGISTRO_AFETADO = OLD.id;
+			
+			/* Por padrão salva o ID que foi deletado. Caso contrário basta cadastrar na tabela ASTARQUI
+			o nome da tabela que não deseja salvar o ID deletado e preencher o campo SALVA_ID_DELETADO com false. */
+			IF ARQUIVO IS NULL OR ARQUIVO.salva_id_deletado THEN
+				
+				INSERT INTO astregde ( schema_tabela, nome_arquivo, id_deletado, uuid_deletado )
+				VALUES ( TG_TABLE_SCHEMA, TG_TABLE_NAME, ID_REGISTRO_AFETADO, OLD.uuid );
+			END IF;
+		END IF;
+		
+		/* Por padrão vai registrar o log das transações. Caso não queira registrar o log
+		de uma tabela basta ir na tabela ASTARQUI e cadastrar a tabela que não deseja registrar
+		log e marcar o campo ASTARQUI.LOG_... com false. */
+		IF TIPO_LOG <> ''
+			AND (
+				ARQUIVO IS NULL
+				OR ARQUIVO.log_alteracao
+				OR ARQUIVO.log_delecao
+				) THEN
+			
+			IF TIPO_LOG != 'D' THEN ID_REGISTRO_AFETADO = NEW.id; END IF;
+			
+			INSERT INTO logger_tabela.astlogta( tipo_log, aplicacao, schema_tabela, tabela, id_registro, descricao_log )
+			VALUES( TIPO_LOG, current_setting('application_name'), TG_TABLE_SCHEMA, TG_TABLE_NAME, ID_REGISTRO_AFETADO, row_to_json(OLD) );
+		END IF;
+		
+		/* Checa qual é o tipo de operação para poder retornar o OLD ou o NEW. */
+		IF TIPO_LOG = 'D' THEN
+			RETURN OLD;
+		ELSE
+			RETURN NEW;
+		END IF;
+END;]]> </definition>
+</function>
+
+<function name="fun_trg_antes_atualizar_todas_tabelas"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Esta função tem o objetivo de fazer checagens e preencher campos obrigatórios todas vez que um registro sobrer alteração.]]> </comment>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[BEGIN
+	-- Primeiro checa se teve uma alteração real
+	IF (NEW != OLD) THEN
+		  
+		NEW.alterado_usuario := CURRENT_USER;
+		NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
+	ELSE
+
+		-- Garante o preenchimento da data de alteração, pois a mesma é indexada em todas as tabelas.
+		IF (NEW.alterado_em IS NULL) THEN
+
+			NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
+		END IF;
+
+		IF (NEW.alterado_usuario IS NULL) THEN
+
+			NEW.alterado_usuario := CURRENT_USER;
+	  	END IF;
+	END IF;
+
+	RETURN NEW;
+END;]]> </definition>
+</function>
+
+<table name="tabela_padrao" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="20" y="20"/>
+	<column name="id" not-null="true">
+		<type name="public.dm_serial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<constraint name="pk_tabela_id" type="pk-constr" table="public.tabela_padrao">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.tabela_padrao">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.tabela_padrao">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<table name="astusuar" layers="1" collapse-mode="2" max-obj-count="15" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Cadastro de usuários que podem acessar o sistema.]]> </comment>
+	<position x="460" y="20"/>
+	<column name="id" not-null="true">
+		<type name="public.dm_serial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="email" not-null="true">
+		<type name="public.dm_email" length="0"/>
+		<comment> <![CDATA[Endereço de e-mail que será usado para logar no sistema.]]> </comment>
+	</column>
+	<column name="senha_hash" not-null="true">
+		<type name="varchar" length="128"/>
+		<comment> <![CDATA[Senha definida pelo usuário e já encriptada.]]> </comment>
+	</column>
+	<column name="ativo" not-null="true">
+		<type name="public.dm_ativo" length="0"/>
+		<comment> <![CDATA[Marca se usuário esta ativo ou não. Por padrão é ativo.]]> </comment>
+	</column>
+	<column name="nascimento" not-null="true">
+		<type name="public.dm_nascimento" length="0"/>
+		<comment> <![CDATA[Data de nascimento do usuário.]]> </comment>
+	</column>
+	<column name="deletado_em">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora que o usuário foi deletado, seja pelo próprio usuário ou por regra do OnSistemas.]]> </comment>
+	</column>
+	<constraint name="pk_astusuar_id" type="pk-constr" table="public.astusuar">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="unique_astusuar_email" type="uq-constr" table="public.astusuar">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="index_astusuar_alterado_em" table="public.astusuar"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<index name="index_astusuar_email" table="public.astusuar"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="email"/>
+		</idxelement>
+</index>
+
+<index name="index_default_alterado_em" table="public.tabela_padrao"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<trigger name="bef_i_u_astusuar" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.astusuar">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_astusuar" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.astusuar">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<table name="astarqui" layers="1" collapse-mode="2" max-obj-count="16" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Cadastro de arquivo. Vai ser cadastrado os nomes das tabelas para indicar algumas propriedades que cada tabela vai ter, um exemplo é se a tabela vai gerar log ou não. Outro propriedade é se o usuário vai ter direito ou não de acessar a tabela e/ou tela.]]> </comment>
+	<position x="880" y="20"/>
+	<column name="id" not-null="true">
+		<type name="public.dm_serial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="nome_arquivo" not-null="true">
+		<type name="public.dm_nome_arquivo" length="0"/>
+		<comment> <![CDATA[Nome da tabela e/ou tela.]]> </comment>
+	</column>
+	<column name="descricao_arqui">
+		<type name="public.dm_descricao_longa" length="0"/>
+		<comment> <![CDATA[Breve descrição do arquivo.]]> </comment>
+	</column>
+	<column name="tipo_arquivo" not-null="true" default-value="'T'">
+		<type name="public.dm_tipo_arquivo" length="0"/>
+		<comment> <![CDATA[Qual é o tipo do arquivo adicionado. T = Tabela. C = Consulta. P = Programa. R = Relatório.]]> </comment>
+	</column>
+	<column name="log_alteracao" not-null="true" default-value="true">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Se é para gerar log quando o registro ter uma alteração/atualização.]]> </comment>
+	</column>
+	<column name="log_delecao" not-null="true" default-value="true">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Se é para gerar log quando o registro for deletado.]]> </comment>
+	</column>
+	<column name="salva_id_deletado" not-null="true" default-value="true">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Se é para salvar o ID do registro que está sendo deletado, esse ID é salvo é uma tabela específica (ASTREGDE). A tabela de ID deletados é utilizado para replicação asincrona.]]> </comment>
+	</column>
+	<constraint name="pk_astarqui_id" type="pk-constr" table="public.astarqui">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="unique_astarqui_nome_arquivo" type="uq-constr" table="public.astarqui">
+		<columns names="nome_arquivo" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="index_astarqui_alterado_em" table="public.astarqui"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<index name="index_astarqui_nome_arquivo" table="public.astarqui"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="nome_arquivo"/>
+		</idxelement>
+</index>
+
+<trigger name="bef_i_u_astarqui" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.astarqui">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_astarqui" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.astarqui">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+</dbmodel>
