@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="217,0" last-zoom="0.8" max-obj-count="36"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="43"
 	 default-owner="postgres"
 	 layers="Exemplos,Administração do Sistema,Administração do Estoque,Cliente e Fornecedor,Contas a Receber e a Pagar,Caixa e Banco"
 	 active-layers="0,1,2,3,4,5"
@@ -214,6 +214,104 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="text" length="0"/>
 </domain>
 
+<domain name="dm_rg_ie" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Número de Incrição Estadual quando for pessoa jurídica ou o Registro Geral quando for pessoa física.]]> </comment>
+	<type name="bigint" length="14"/>
+</domain>
+
+<domain name="dm_codigo" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="integer" length="0"/>
+</domain>
+
+<domain name="dm_codigo_sequencial" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="serial" length="0"/>
+</domain>
+
+<domain name="dm_data" not-null="false" default-value="null">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="date" length="0"/>
+</domain>
+
+<domain name="dm_sigla_pais" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="char" length="2"/>
+</domain>
+
+<domain name="dm_ddd" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[DDD significa "Discagem Direta à Distância".]]> </comment>
+	<type name="smallint" length="0"/>
+</domain>
+
+<sequence name="seq_cftpesso_cliente" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="seq_cftpesso_fornecedor" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="seq_cftpesso_funcionario" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="seq_cftpesso_transportadora" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<function name="fun_trg_antes_atualizar_todas_tabelas"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Esta função tem o objetivo de fazer checagens e preencher campos obrigatórios todas vez que um registro sobrer alteração.]]> </comment>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[BEGIN
+	-- Primeiro checa se teve uma alteração real
+	IF (NEW != OLD) THEN
+		  
+		NEW.alterado_usuario := CURRENT_USER;
+		NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
+	ELSE
+
+		-- Garante o preenchimento da data de alteração, pois esta coluna é indexada em todas as tabelas.
+		IF (NEW.alterado_em IS NULL) THEN
+
+			NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
+		END IF;
+
+		IF (NEW.alterado_usuario IS NULL) THEN
+
+			NEW.alterado_usuario := CURRENT_USER;
+	  	END IF;
+	END IF;
+
+	RETURN NEW;
+END;]]> </definition>
+</function>
+
 <function name="fun_trg_gera_logger_todas_tabelas"
 		window-func="false"
 		returns-setof="false"
@@ -330,7 +428,7 @@ BEGIN
 END;]]> </definition>
 </function>
 
-<function name="fun_trg_antes_atualizar_todas_tabelas"
+<function name="fun_trg_gera_codigo_pessoa"
 		window-func="false"
 		returns-setof="false"
 		behavior-type="CALLED ON NULL INPUT"
@@ -341,29 +439,58 @@ END;]]> </definition>
 		row-amount="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment> <![CDATA[Esta função tem o objetivo de fazer checagens e preencher campos obrigatórios todas vez que um registro sobrer alteração.]]> </comment>
 	<language name="plpgsql"/>
 	<return-type>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition> <![CDATA[BEGIN
-	-- Primeiro checa se teve uma alteração real
-	IF (NEW != OLD) THEN
-		  
-		NEW.alterado_usuario := CURRENT_USER;
-		NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
-	ELSE
-
-		-- Garante o preenchimento da data de alteração, pois esta coluna é indexada em todas as tabelas.
-		IF (NEW.alterado_em IS NULL) THEN
-
-			NEW.alterado_em := timezone('utc', CURRENT_TIMESTAMP);
+	IF ( TG_OP = 'INSERT' ) THEN
+	
+		IF ( NEW.eh_cliente ) THEN 
+			
+			NEW.codigo_cliente := nextval( 'seq_cftpesso_cliente' ); 
+		END IF;
+		
+		IF ( NEW.eh_fornecedor ) THEN
+			
+			NEW.codigo_fornecedor := nextval( 'seq_cftpesso_fornecedor' );
+		END IF;
+		
+		IF ( NEW.eh_funcionario ) THEN
+			
+			NEW.codigo_funcionario := nextval( 'seq_cftpesso_funcionario' );
 		END IF;
 
-		IF (NEW.alterado_usuario IS NULL) THEN
+		IF ( NEW.eh_fornecedor ) THEN
+			
+			NEW.codigo_transportadora := nextval( 'seq_cftpesso_transportadora' ); 
+		END IF;
+		
+	ELSIF ( TG_OP = 'UPDATE' ) THEN
+	
+		IF ( NEW.eh_cliente ) AND ( !OLD.eh_cliente ) 
+			AND ( ( NEW.codigo_cliente IS NULL ) OR ( NEW.codigo_cliente = '' ) ) THEN 
+			
+			NEW.codigo_cliente := nextval( 'seq_cftpesso_cliente' ); 
+		END IF;
 
-			NEW.alterado_usuario := CURRENT_USER;
-	  	END IF;
+		IF ( NEW.eh_fornecedor ) AND ( !OLD.eh_fornecedor ) 
+			AND ( ( NEW.codigo_fornecedor IS NULL ) OR ( NEW.codigo_fornecedor = '' ) ) THEN 
+			
+			NEW.codigo_cliente := nextval( 'seq_cftpesso_fornecedor' ); 
+		END IF;
+
+		IF ( NEW.eh_funcionario ) AND ( !OLD.eh_funcionario ) 
+			AND ( ( NEW.codigo_funcionario IS NULL ) OR ( NEW.codigo_funcionario = '' ) ) THEN 
+			
+			NEW.codigo_cliente := nextval( 'seq_cftpesso_funcionario' ); 
+		END IF;
+
+		IF ( NEW.eh_transportadora ) AND ( !OLD.eh_transportadora ) 
+			AND ( ( NEW.codigo_transportadora IS NULL ) OR ( NEW.codigo_transportadora = '' ) ) THEN 
+			
+			NEW.codigo_cliente := nextval( 'seq_cftpesso_transportadora' ); 
+		END IF;
 	END IF;
 
 	RETURN NEW;
@@ -419,7 +546,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
 </trigger>
 
-<trigger name="aft_u_d_log_" firing-type="AFTER" per-line="false" constraint="false"
+<trigger name="aft_u_d_log_" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
 	 table="public.tabela_padrao">
 		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
@@ -941,6 +1068,416 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 		<idxelement use-sorting="false">
 			<column name="cpf_cnpj"/>
 		</idxelement>
+</index>
+
+<table name="cftpesso" layers="3" collapse-mode="2" max-obj-count="33" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Tabela que concentra o cadastro de todas as pessoas físicas ou jurídicas. A ideia é salvar o cadastro de clientes, fornecedores, representantes, funcionários, etc.]]> </comment>
+	<position x="960" y="620"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="cpf_cnpj" not-null="true">
+		<type name="public.dm_cpf_cnpj" length="0"/>
+		<comment> <![CDATA[Somente o número do Cadastro de Pessoa Física (CPF) ou o número do Cadastro Nacional de Pessoa Jurídica (CNPJ).]]> </comment>
+	</column>
+	<column name="rg_ie">
+		<type name="public.dm_rg_ie" length="0"/>
+		<comment> <![CDATA[Somente o Rgistro Geral (RG) da pessoa física ou a Incrição Estadual (IE) de pessoa jurídica.]]> </comment>
+	</column>
+	<column name="inscricao_suframa">
+		<type name="public.dm_rg_ie" length="0"/>
+		<comment> <![CDATA[Inscrição na SUFRAMA. Obrigatório, nas operações que se beneficiam de incentivos fiscais existentes nas áreas sob controle da SUFRAMA. A omissão desta informação impede o processamento da operação pelo Sistema de Mercadoria Nacional da SUFRAMA e a liberação da Declaração de Ingresso, prejudicando a comprovação do ingresso / internamento da mercadoria nestas áreas.
+]]> </comment>
+	</column>
+	<column name="inscricao_municipal" default-value="null">
+		<type name="public.dm_rg_ie" length="0"/>
+		<comment> <![CDATA[Número de incrição municipal na pessoa.]]> </comment>
+	</column>
+	<column name="tipo_contribuinte" default-value="9">
+		<type name="public.dm_tipo" length="0"/>
+		<comment> <![CDATA[Indica se a pessoa é contribuinte de ICMS ou não. As opções são:
+1=Contribuinte ICMS (informar a IE do destinatário); 
+2=Contribuinte isento de Inscrição no cadastro de Contribuintes;
+9=Não Contribuinte, que pode ou não possuir Inscrição  Estadual no Cadastro de Contribuintes do ICMS.
+
+Notas da NFe e NFCe:
+Nota 1: No caso de NFC-e informar indIEDest=9 e não informar a tag IE do destinatário;
+Nota 2: No caso de operação com o Exterior informar  indIEDest=9 e não informar a tag IE do destinatário; 
+Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest=2), não informar a tag IE do destinatário.]]> </comment>
+	</column>
+	<column name="orgao_emissor_rg" default-value="null">
+		<type name="public.dm_nome_arquivo" length="0"/>
+		<comment> <![CDATA[É necessário preencher este campo quando for o cadastro de uma pessoa física (CPF) para identificar qual orgão emitiu o RG.]]> </comment>
+	</column>
+	<column name="nascido_em" default-value="null">
+		<type name="public.dm_nascimento" length="0"/>
+	</column>
+	<column name="eh_cliente" default-value="false">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Indica se este cadastro também faz parte como cliente.]]> </comment>
+	</column>
+	<column name="eh_fornecedor" default-value="false">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Indica se este cadastro também faz parte como fornecedor.]]> </comment>
+	</column>
+	<column name="eh_funcionario" default-value="false">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Indica se este cadastro também faz parte como funcionário.]]> </comment>
+	</column>
+	<column name="eh_transportadora" default-value="false">
+		<type name="public.dm_sim_nao" length="0"/>
+		<comment> <![CDATA[Indica se este cadastro também faz parte como transportadora.]]> </comment>
+	</column>
+	<column name="codigo_cliente" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código sequêncial quando o cadastro é um cliente.]]> </comment>
+	</column>
+	<column name="codigo_fornecedor" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código sequêncial quando o cadastro é um fornecedor.]]> </comment>
+	</column>
+	<column name="codigo_funcionario" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código sequêncial quando o cadastro é um funcionario.]]> </comment>
+	</column>
+	<column name="codigo_transportadora" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código sequêncial quando o cadastro é uma transportadora.]]> </comment>
+	</column>
+	<column name="renda_giro_mensal">
+		<type name="public.dm_valor_monetario" length="0"/>
+		<comment> <![CDATA[Valor de renda mensal quando for pessoa física ou do capital de giro mensal para quando for pessoa jurídica. O valor a ser registrado aqui deve ser o que possui comprovante oficial como holerite, declaração de imposto de renda, Declaração Comprobatória de Percepção de Rendimentos (Decore), etc. ]]> </comment>
+	</column>
+	<column name="outras_rendas_mensal">
+		<type name="public.dm_valor_monetario" length="0"/>
+		<comment> <![CDATA[Adicione aqui as rendas/faturamento da pessoa que não tem com conprovante oficial.]]> </comment>
+	</column>
+	<column name="observacao" default-value="null">
+		<type name="public.dm_observacao" length="0"/>
+		<comment> <![CDATA[Texto de qualquer preferência que sejam necessário e/ou pertinentes para o cadastro da pessoa.]]> </comment>
+	</column>
+	<column name="estado_civil" default-value="1">
+		<type name="public.dm_tipo" length="0"/>
+		<comment> <![CDATA[1. Solteiro - É a pessoa que nunca se casou, independente se possui um relacionamento estável ou não.
+2. Casado - É o indivíduo que possui uma união matrimonial através do casamento civil, independente do regime de bens adotado.
+3. Separado - É quem não vive mais com o companheiro, porém ainda não está divorciado. A pessoa que está separada, pode decretar a separação judicial, para acabar com os deveres da sociedade conjugal.
+4. Divorciado - É a pessoa que teve homologado seu pedido de divórcio através da justiça, ou de uma escritura.
+5. Viúvo - É o indivíduo que o cônjuge (marido ou esposa) faleceu.]]> </comment>
+	</column>
+	<column name="casado_em">
+		<type name="public.dm_data" length="0"/>
+		<comment> <![CDATA[Data do casamento.]]> </comment>
+	</column>
+	<constraint name="pk_cftpesso_id" type="pk-constr" table="public.cftpesso">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_cftpesso" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftpesso">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_cftpesso" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.cftpesso">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_cftpesso_alterado_em" table="public.cftpesso"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<trigger name="bef_i_u_cftpesso_gera_codigo" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftpesso">
+		<function signature="public.fun_trg_gera_codigo_pessoa()"/>
+</trigger>
+
+<table name="cftpaise" layers="3" collapse-mode="2" max-obj-count="14" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Tabela para salvar o cadastro de países.]]> </comment>
+	<position x="1480" y="620"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="descricao_pais" not-null="true">
+		<type name="public.dm_nome" length="0"/>
+		<comment> <![CDATA[O nome do país.]]> </comment>
+	</column>
+	<column name="sigla_pais" default-value="null">
+		<type name="public.dm_sigla_pais" length="2"/>
+		<comment> <![CDATA[Sigla utlizada para o país segundo a ISO 3166-1, deve ser preenchido com duas letras.]]> </comment>
+	</column>
+	<column name="codigo_bacen_nfe" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código utilizando na tabela do BACEN, tabela de apoio publicada no Portal da NF-e.]]> </comment>
+	</column>
+	<column name="codigo_ibge" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código do pais cadastrado na tabela do IBGE.]]> </comment>
+	</column>
+	<constraint name="pk_cftpaise_id" type="pk-constr" table="public.cftpaise">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_cftpaise" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftpaise">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_cftpaise" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.cftpaise">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_cftpaise_alterado_em" table="public.cftpaise"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="cftestad" layers="3" collapse-mode="2" max-obj-count="15" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Armazena os estados do país.]]> </comment>
+	<position x="1920" y="620"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_cftpaise" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[Código do país que pertence o estado]]> </comment>
+	</column>
+	<column name="uf" not-null="true">
+		<type name="public.dm_sigla_pais" length="0"/>
+		<comment> <![CDATA[Sigla do estado.]]> </comment>
+	</column>
+	<column name="descricao_estado" not-null="true">
+		<type name="public.dm_descricao_longa" length="0"/>
+		<comment> <![CDATA[Nome do Estado.]]> </comment>
+	</column>
+	<column name="codigo_ibge" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código da tabela do IBGE do estado.]]> </comment>
+	</column>
+	<column name="ddd_estado" default-value="null">
+		<type name="public.dm_ddd" length="0"/>
+		<comment> <![CDATA[DDD significa "Discagem Direta à Distância". É um sistema de códigos de área telefônica utilizado no Brasil para identificar a localização geográfica de um número de telefone fixo. Cada região do Brasil possui um código DDD específico.]]> </comment>
+	</column>
+	<constraint name="pk_cftestad_id" type="pk-constr" table="public.cftestad">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_cftestad" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftestad">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_cftestad" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.cftestad">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_cftestad_alterado_em" table="public.cftestad"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="cftcidad" layers="3" collapse-mode="2" max-obj-count="14" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Armazena as cidades de cada estado.]]> </comment>
+	<position x="1480" y="1060"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_cftestad" not-null="true">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código do estado.]]> </comment>
+	</column>
+	<column name="descricao_cidade" not-null="true">
+		<type name="public.dm_descricao_longa" length="0"/>
+		<comment> <![CDATA[Nome da cidade.]]> </comment>
+	</column>
+	<column name="codigo_ibge" default-value="null">
+		<type name="public.dm_codigo" length="0"/>
+		<comment> <![CDATA[Código da cidade baseado na tabela do IBGE.]]> </comment>
+	</column>
+	<column name="ddd_cidade" default-value="null">
+		<type name="public.dm_ddd" length="0"/>
+		<comment> <![CDATA[DDD significa "Discagem Direta à Distância". É um sistema de códigos de área telefônica utilizado no Brasil para identificar a localização geográfica de um número de telefone fixo. Cada região do Brasil possui um código DDD específico.]]> </comment>
+	</column>
+	<constraint name="pk_cftcidad_id" type="pk-constr" table="public.cftcidad">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_cftcidad" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftcidad">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_cftcidad" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.cftcidad">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_cftcidad_alterado_em" table="public.cftcidad"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
 </index>
 
 </dbmodel>
