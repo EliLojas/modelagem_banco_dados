@@ -230,7 +230,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <domain name="dm_codigo_sequencial" not-null="false">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<type name="serial" length="0"/>
+	<type name="integer" length="0"/>
 </domain>
 
 <domain name="dm_data" not-null="false" default-value="null">
