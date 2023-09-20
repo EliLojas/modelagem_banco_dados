@@ -1278,7 +1278,10 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 	</column>
 	<column name="sigla_pais" default-value="null">
 		<type name="public.dm_sigla_pais" length="2"/>
-		<comment> <![CDATA[Sigla utlizada para o país segundo a ISO 3166-1, deve ser preenchido com duas letras.]]> </comment>
+		<comment> <![CDATA[Sigla utlizada para o país segundo a ISO 3166-1 alpha 2, deve ser preenchido com duas letras. Por exemplo:
+Brasil = BR
+Estados Unidos da América = US
+Índia = IN]]> </comment>
 	</column>
 	<column name="codigo_bacen_nfe" default-value="null">
 		<type name="public.dm_codigo" length="0"/>
