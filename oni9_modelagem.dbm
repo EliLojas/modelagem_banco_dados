@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="43"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="48"
 	 default-owner="postgres"
 	 layers="Exemplos,Administração do Sistema,Administração do Estoque,Cliente e Fornecedor,Contas a Receber e a Pagar,Caixa e Banco"
 	 active-layers="0,1,2,3,4,5"
@@ -252,10 +252,29 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="smallint" length="0"/>
 </domain>
 
-<sequence name="seq_cftpesso_cliente" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+<domain name="dm_cep" not-null="false">
 	<schema name="public"/>
 	<role name="postgres"/>
-</sequence>
+	<type name="char" length="8"/>
+</domain>
+
+<domain name="dm_bairro" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="255"/>
+</domain>
+
+<domain name="dm_logradouro" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="varchar" length="255"/>
+</domain>
+
+<domain name="dm_numero_endereco" not-null="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<type name="integer" length="0"/>
+</domain>
 
 <sequence name="seq_cftpesso_fornecedor" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="public"/>
@@ -268,6 +287,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </sequence>
 
 <sequence name="seq_cftpesso_transportadora" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="seq_cftpesso_cliente" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="public"/>
 	<role name="postgres"/>
 </sequence>
@@ -555,7 +579,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 <table name="astusuar" layers="1" collapse-mode="2" max-obj-count="15" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment> <![CDATA[Cadastro de usuários que podem acessar o sistema.]]> </comment>
+	<comment> <![CDATA[Cadastro de usuários que podem acessar o sistema/plataforma.]]> </comment>
 	<position x="460" y="60"/>
 	<column name="id" not-null="true">
 		<type name="bigserial" length="0"/>
@@ -660,7 +684,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 <table name="astarqui" layers="1" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment> <![CDATA[Cadastro de arquivo. Vai ser cadastrado os nomes das tabelas para indicar algumas propriedades que cada tabela vai ter, um exemplo é se a tabela vai gerar log ou não. Outro propriedade é se o usuário vai ter direito ou não de acessar a tabela e/ou tela.]]> </comment>
+	<comment> <![CDATA[Cadastro de arquivo. Vai ser cadastrado os nomes das tabelas para indicar algumas propriedades que cada tabela vai ter, um exemplo é se a tabela vai gerar log ou não. Outra propriedade que vai ser possível salvar nesta tabela é se o usuário vai ter direito ou não de acessar uma tabela e/ou tela específica.]]> </comment>
 	<position x="880" y="60"/>
 	<column name="id" not-null="true">
 		<type name="bigserial" length="0"/>
@@ -760,7 +784,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 <table name="astregde" layers="1" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment> <![CDATA[Registro deletados. Vai entrar nesta tabela os registro que foram deletados. Para um possível desenvolvimento de replicação de dados, se necessário. Assim irá ser possível replicar os registros deletados.]]> </comment>
+	<comment> <![CDATA[Registro deletados. Vai entrar nesta tabela todos os registros que foram deletados. Para um possível desenvolvimento de replicação de dados, se necessário. Assim irá ser possível replicar os registros deletados.]]> </comment>
 	<position x="1320" y="60"/>
 	<column name="id" not-null="true">
 		<type name="bigserial" length="0"/>
@@ -1073,7 +1097,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 <table name="cftpesso" layers="3" collapse-mode="2" max-obj-count="33" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment> <![CDATA[Tabela que concentra o cadastro de todas as pessoas físicas ou jurídicas. A ideia é salvar o cadastro de clientes, fornecedores, representantes, funcionários, etc.]]> </comment>
+	<comment> <![CDATA[Tabela que concentra o cadastro de todas as pessoas físicas ou jurídicas. A ideia é salvar o cadastro de clientes, fornecedores, representantes, funcionários, etc, todos nesta tabela. O cadastro vai ser único e vai diferenciar no código de cada tipo, ou seja, o mesmo cpf/cnpj pode ter um código de cliente e outro código para fornecedor, mas o registro nesta tabela vai ser apenas um.]]> </comment>
 	<position x="960" y="620"/>
 	<column name="id" not-null="true">
 		<type name="bigserial" length="0"/>
@@ -1406,7 +1430,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Armazena as cidades de cada estado.]]> </comment>
-	<position x="1480" y="1060"/>
+	<position x="1480" y="1100"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 		<comment> <![CDATA[Identificador do registro.]]> </comment>
@@ -1483,4 +1507,103 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 	<columns names="alterado_em"/>
 </index>
 
+<table name="cftender" layers="3" collapse-mode="2" max-obj-count="19" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Concentra nesta tabela todos os endereços ligados a uma pessoa (cftpesso), esses endereços podem ser de cobrança, fatura, entrega, etc.]]> </comment>
+	<position x="1940" y="1100"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_cftpesso" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do cadastro da pessoa, ou seja, o registro que está na tabela cftpesso.]]> </comment>
+	</column>
+	<column name="tipo_ender">
+		<type name="public.dm_tipo" length="0"/>
+		<comment> <![CDATA[Tipo de endereço da pessoa. 0 = Cobrança/Faturamento/Nota Fiscal. 1 = Entrega.]]> </comment>
+	</column>
+	<column name="cep" not-null="true">
+		<type name="public.dm_cep" length="0"/>
+		<comment> <![CDATA[O Código de Endereçamento Postal (CEP) fornecido pelos correios. Deve ser digitado apenas números.]]> </comment>
+	</column>
+	<column name="id_cftcidad" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID da cidade que está na tabela cftcidad.]]> </comment>
+	</column>
+	<column name="logradouro" not-null="true">
+		<type name="public.dm_logradouro" length="0"/>
+		<comment> <![CDATA[Endereço da pessoa concatenado com o tipo (rua, av, conjunto, etc) de endereço.]]> </comment>
+	</column>
+	<column name="numero" default-value="null">
+		<type name="public.dm_numero_endereco" length="0"/>
+	</column>
+	<column name="complemento" default-value="null">
+		<type name="public.dm_observacao" length="0"/>
+	</column>
+	<column name="bairro" default-value="null">
+		<type name="public.dm_bairro" length="0"/>
+	</column>
+	<constraint name="pk_cftender_id" type="pk-constr" table="public.cftender">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_cftender" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.cftender">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_cftender" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.cftender">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_cftender_alterado_em" table="public.cftender"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<policy name="check_cep_cftender" table="public.cftender" command="ALL" permissive="true">
+	<comment> <![CDATA[Checa se o código do cep só tem números.]]> </comment>
+
+	<expression type="check-exp"> <![CDATA[cep ~ '^[0-9]{8}$']]> </expression>
+</policy>
 </dbmodel>
