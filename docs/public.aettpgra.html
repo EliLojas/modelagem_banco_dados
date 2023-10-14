@@ -5,14 +5,14 @@
  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-<table id="public.astarqui" class="table">
+<table id="public.aettpgra" class="table">
  <caption class="tab-name">
- <em>public</em>.<strong>astarqui</strong>
+ <em>public</em>.<strong>aettpgra</strong>
  <span class="type-label">Table</span>
  </caption>
  <thead>
  <tr>
- <td colspan="8" class="tab-description">Cadastro de arquivo. Vai ser cadastrado os nomes das tabelas para indicar algumas propriedades que cada tabela vai ter, um exemplo é se a tabela vai gerar log ou não. Outra propriedade que vai ser possível salvar nesta tabela é se o usuário vai ter direito ou não de acessar uma tabela e/ou tela específica.
+ <td colspan="8" class="tab-description">Tripo de grade. A grade de produtos é um recurso utilizado para classificar produtos em estoque. Ela é composta por tipos de grade, que podem ser cor, tamanho, voltagem, etc. Cada tipo de grade pode ter valores permitidos, como preto, marrom, azul, etc. As grades são usadas para acrescentar e agrupar informações repetitivas na descrição de um produto, de forma a padronizar a nomenclatura e permitir classificar produtos com características parecidas dentro de um cadastro de produto apenas . Por exemplo, para cadastrar um item de calçado, é necessário informar o nome, modelo, cor e número do calçado. Neste caso, modelo, cor e número são tipos de grades.
  </td>
  </tr>
  <tr>
@@ -110,64 +110,14 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  <td><p class="max-td-wth"><em>Último usuário do banco de dados que fez alteração no registro.</em></p></td>
  </tr>
  <tr>
- <td>nome_arquivo</td>
- <td class="data-type">public.dm_nome_arquivo</td>
+ <td>descricao_tipo_grade</td>
+ <td class="data-type">public.dm_descricao</td>
  <td class="bool-field"></td>
  <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
+ <td class="bool-field"></td>
  <td class="bool-field">&#10003;</td>
  <td class="value"></td>
- <td><p class="max-td-wth"><em>Nome da tabela e/ou tela.</em></p></td>
- </tr>
- <tr>
- <td>descricao_arqui</td>
- <td class="data-type">public.dm_descricao_longa</td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="value"></td>
- <td><p class="max-td-wth"><em>Breve descrição do arquivo.</em></p></td>
- </tr>
- <tr>
- <td>tipo_arquivo</td>
- <td class="data-type">public.dm_tipo_arquivo</td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
- <td class="value">'T'</td>
- <td><p class="max-td-wth"><em>Qual é o tipo do arquivo adicionado. T = Tabela. C = Consulta. P = Programa. R = Relatório.</em></p></td>
- </tr>
- <tr>
- <td>log_alteracao</td>
- <td class="data-type">public.dm_sim_nao</td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
- <td class="value">true</td>
- <td><p class="max-td-wth"><em>Se é para gerar log quando o registro ter uma alteração/atualização.</em></p></td>
- </tr>
- <tr>
- <td>log_delecao</td>
- <td class="data-type">public.dm_sim_nao</td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
- <td class="value">true</td>
- <td><p class="max-td-wth"><em>Se é para gerar log quando o registro for deletado.</em></p></td>
- </tr>
- <tr>
- <td>salva_id_deletado</td>
- <td class="data-type">public.dm_sim_nao</td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
- <td class="value">true</td>
- <td><p class="max-td-wth"><em>Se é para salvar o ID do registro que está sendo deletado, esse ID é salvo é uma tabela específica (ASTREGDE). A tabela de ID deletados é utilizado para replicação asincrona.</em></p></td>
+ <td><p class="max-td-wth"><em>Descrição/Nome do tipo de grade.</em></p></td>
  </tr>
  <tr>
  <td colspan="8" class="nested-tab-parent">
@@ -184,17 +134,9 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  <td class="title">Description</td>
  </tr>
  <tr>
- <td>pk_astarqui_id</td>
+ <td>pk_aettpgra_id</td>
  <td class="value constr-type">PRIMARY KEY</td>
  <td>id</td>
- <td></td>
- <td class="value"></td>
- <td colspan="3"><p class="max-td-wth"><em></em></p></td>
- </tr>
- <tr>
- <td>unique_astarqui_nome_arquivo</td>
- <td class="value constr-type">UNIQUE</td>
- <td>nome_arquivo</td>
  <td></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
@@ -217,17 +159,9 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  <td class="title">Description</td>
  </tr>
  <tr>
- <td>index_astarqui_alterado_em</td>
+ <td>index_aettpgra_alterado_em</td>
  <td class="value constr-type">btree</td>
  <td>alterado_em</td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td><p class="max-td-wth"><em></em></p></td></td>
- </tr>
- <tr>
- <td>index_astarqui_nome_arquivo</td>
- <td class="value constr-type">btree</td>
- <td>nome_arquivo</td>
  <td class="value"><p class="max-td-wth"></p></td>
  <td class="value"><p class="max-td-wth"></p></td>
  <td><p class="max-td-wth"><em></em></p></td></td>
@@ -253,7 +187,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  <td class="title">Description</td>
  </tr>
  <tr>
- <td>bef_i_u_astarqui</td>
+ <td>bef_i_u_aettpgra</td>
  <td class="value constr-type">NOT DEFERRABLE</td>
  <td>public.fun_trg_antes_atualizar_todas_tabelas()</td>
  <td class="value constr-type">BEFORE</td>
@@ -265,7 +199,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  <td><p class="max-td-wth"><em></em></p></td></td>
  </tr>
  <tr>
- <td>aft_u_d_log_astarqui</td>
+ <td>aft_u_d_log_aettpgra</td>
  <td class="value constr-type">NOT DEFERRABLE</td>
  <td>public.fun_trg_gera_logger_todas_tabelas()</td>
  <td class="value constr-type">AFTER</td>
@@ -276,6 +210,18 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
  </td>
  <td><p class="max-td-wth"><em></em></p></td></td>
  </tr>
+ <tr>
+ <td>bef_d_nao_exc_id_aettpgra</td>
+ <td class="value constr-type">NOT DEFERRABLE</td>
+ <td>public.fun_trg_impedir_exclusao_id_referenciado()</td>
+ <td class="value constr-type">BEFORE</td>
+ <td class="value constr-type">ON DELETE</td>
+ <td class="bool-field">&#10003;</td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td>
+ </td>
+ <td><p class="max-td-wth"><em>O objetivo principal dessa trigger é garantir que não ocorram exclusões acidentais que quebrariam a integridade dos dados, mantendo a consistência dos relacionamentos de chave estrangeira.</em></p></td></td>
+ </tr>
  </table>
  </td>
  </tr>
@@ -283,9 +229,9 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.</em></p></td>
 </table>
 
 <div>
- <a href="public.aetunida.html" class="nav-link">&larr; public.aetunida</a>
+ <a href="public.aetsubgr.html" class="nav-link">&larr; public.aetsubgr</a>
  <a href="index.html" class="nav-link">&uarr; Index</a>
- <a href="public.astorgan.html" class="nav-link">public.astorgan &rarr;</a>
+ <a href="public.aetunida.html" class="nav-link">public.aetunida &rarr;</a>
 </div>
 <footer>
 Generated at <em>2023-10-14T09:39:59 </em> by <strong>pgModeler 1.0.2</strong><br/>

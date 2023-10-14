@@ -319,8 +319,48 @@ Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest=2), não inform
  <td class="bool-field"></td>
  <td class="bool-field"></td>
  <td class="bool-field"></td>
- <td class="value"></td>
+ <td class="value">null</td>
  <td><p class="max-td-wth"><em>Data do casamento.</em></p></td>
+ </tr>
+ <tr>
+ <td>nome_razao_social</td>
+ <td class="data-type">public.dm_nome</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field">&#10003;</td>
+ <td class="value"></td>
+ <td><p class="max-td-wth"><em>Nome completo da pessoa, ou a razão social completa quando for pessoa jurídica.</em></p></td>
+ </tr>
+ <tr>
+ <td>apelino_fantasia</td>
+ <td class="data-type">public.dm_nome</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="value">null</td>
+ <td><p class="max-td-wth"><em>Apelido que a pessoa física possui ou a fantasia quando for pessoa jurídica.</em></p></td>
+ </tr>
+ <tr>
+ <td>email_login</td>
+ <td class="data-type">public.dm_email</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="value">null</td>
+ <td><p class="max-td-wth"><em>Endereço de e-mail principal de cada pessoa, seja física ou jurídica, para efetuar login nos aplicativos/sites que vão ser disponibilizados.</em></p></td>
+ </tr>
+ <tr>
+ <td>senha_login_hash</td>
+ <td class="data-type">public.dm_senha_hash</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="value">null</td>
+ <td><p class="max-td-wth"><em>Senha utilizada para efetura login nos aplicativos/sites que vão ser disponibilizados.</em></p></td>
  </tr>
  <tr>
  <td colspan="8" class="nested-tab-parent">
@@ -437,7 +477,7 @@ Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest=2), não inform
  <a href="public.tabela_padrao.html" class="nav-link">public.tabela_padrao &rarr;</a>
 </div>
 <footer>
-Generated at <em>2023-09-21T09:02:14 </em> by <strong>pgModeler 1.0.2</strong><br/>
+Generated at <em>2023-10-14T09:39:59 </em> by <strong>pgModeler 1.0.2</strong><br/>
 <a href="https://pgmodeler.io">PostgreSQL Database Modeler - https://pgmodeler.io</a><br/>
 Copyright © 2006 - 2023 Raphael Araújo e Silva
 </footer> </body>
