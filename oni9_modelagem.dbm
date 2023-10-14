@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="48"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="2047,391" last-zoom="0.85" max-obj-count="49"
 	 default-owner="postgres"
 	 layers="Exemplos,Administração do Sistema,Administração do Estoque,Cliente e Fornecedor,Contas a Receber e a Pagar,Caixa e Banco"
 	 active-layers="0,1,2,3,4,5"
@@ -16,7 +16,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<schema name="logger_tabela" layers="0" rect-visible="true" fill-color="#e1e1e1">
+<schema name="logger_tabela" layers="0" fill-color="#e1e1e1">
 	<role name="postgres"/>
 	<comment> <![CDATA[Schema para armazenar todos os registros de logs que serão produzidos pela aplicação e pelo banco de dados.]]> </comment>
 </schema>
@@ -135,7 +135,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <domain name="dm_nome" not-null="false">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<type name="varchar" length="160"/>
+	<type name="varchar" length="180"/>
 </domain>
 
 <domain name="dm_tipo" not-null="false" default-value="0">
@@ -276,10 +276,82 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="integer" length="0"/>
 </domain>
 
-<sequence name="seq_cftpesso_fornecedor" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+<domain name="dm_sigla_unidade" not-null="false">
 	<schema name="public"/>
 	<role name="postgres"/>
-</sequence>
+	<type name="varchar" length="3"/>
+</domain>
+
+<table name="aetprodu" layers="2" collapse-mode="2" max-obj-count="16" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Concentra cadastro de produtos.]]> </comment>
+	<position x="2860" y="600"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_aetcatag" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID de categoria do produto.]]> </comment>
+	</column>
+	<column name="id_aetgrupo" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do grupo de categoria.]]> </comment>
+	</column>
+	<column name="id_aetsubgr" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do subgrupo do produto.]]> </comment>
+	</column>
+	<column name="descricao_produto" not-null="true">
+		<type name="public.dm_descricao_longa" length="0"/>
+		<comment> <![CDATA[Descrição completa do produto.]]> </comment>
+	</column>
+	<column name="descricao_auxiliar" default-value="null">
+		<type name="public.dm_observacao" length="0"/>
+		<comment> <![CDATA[Descrição livre para ser feita a respeito do produto, também pode ser tratado como um campo de observação para o produto.]]> </comment>
+	</column>
+	<column name="tipo_produto" not-null="true" default-value="0">
+		<type name="public.dm_tipo" length="0"/>
+		<comment> <![CDATA[São os típo possíveis de produtos.
+0 = Produto.
+1 = Serviço.
+2 = Produto com grade.]]> </comment>
+	</column>
+	<constraint name="pk_aetprodu_id" type="pk-constr" table="public.aetprodu">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
 
 <sequence name="seq_cftpesso_funcionario" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
 	<schema name="public"/>
@@ -313,6 +385,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition> <![CDATA[BEGIN
+	/* Usado para não executar a trigger quando estiver fazendo replicação. Nunca desative as trigger, pois certeza que vai dar merda. */ 
+	IF ( SELECT COALESCE( current_setting('sessao.usuario.replicacao', TRUE), '0') = '1' ) THEN RETURN NULL; END IF;
+	
 	-- Primeiro checa se teve uma alteração real
 	IF (NEW != OLD) THEN
 		  
@@ -468,6 +543,9 @@ END;]]> </definition>
 	<type name="trigger" length="0"/>
 	</return-type>
 	<definition> <![CDATA[BEGIN
+	/* Usado para não executar a trigger quando estiver fazendo replicação. Nunca desative as trigger, pois certeza que vai dar merda. */ 
+	IF ( SELECT COALESCE( current_setting('sessao.usuario.replicacao', TRUE), '0') = '1' ) THEN RETURN NULL; END IF;
+
 	IF ( TG_OP = 'INSERT' ) THEN
 	
 		IF ( NEW.eh_cliente ) THEN 
@@ -518,6 +596,59 @@ END;]]> </definition>
 	END IF;
 
 	RETURN NEW;
+END;]]> </definition>
+</function>
+
+<function name="fun_trg_impedir_exclusao_id_referenciado"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		parallel-type="PARALLEL UNSAFE"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Esta função tem o objetivo de evitar a exclusão de registros em uma tabela que possui relacionamentos de chave estrangeira com outras tabelas. Quando você quer excluir um registro em um banco de dados, é importante ter certeza de que esse registro não está sendo usado por outros registros em diferentes partes do banco de dados. 
+
+Ela é projetada para ser uma função de gatilho (trigger) genérica que pode ser usada em várias situações, em que o objetivo é garantir a integridade referencial dos dados no banco de dados.
+
+A função atua da seguinte forma:
+
+1. Recebe dois parâmetros como entrada:
+   - `lista_nomes_tabelas`: Um array com os nomes das tabelas relacionadas que contém os registros que podem estar referenciando o registro a ser excluído. Ou seja, o lugar (tabela) onde o ID do registro a ser deletado está atualemnte.
+
+2. A função verifica se existem registros nas tabelas relacionadas que referenciam o registro que está prestes a ser excluído.
+
+3. Se a função encontrar registros relacionados, ela lança uma exceção com uma mensagem de erro indicando que não é possível excluir o registro, uma vez que existem registros dependentes na tabela relacionada. Isso impede a exclusão e mantém a integridade referencial dos dados.
+
+O objetivo principal dessa função é ajudar a garantir que não ocorram exclusões acidentais que quebrariam a integridade dos dados em seu banco de dados, mantendo a consistência dos relacionamentos de chave estrangeira. Ela fornece uma maneira flexível e reutilizável de implementar essa lógica de verificação em diferentes tabelas que precisam dessa proteção.]]> </comment>
+	<language name="plpgsql"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition> <![CDATA[DECLARE
+	lista_nomes_tabelas public.dm_nome_arquivo[] := TG_ARGV[0];
+	nome_tabela public.dm_nome_arquivo;
+	existente_relacionamento BOOLEAN;
+BEGIN
+	/* Usado para não executar a trigger quando estiver fazendo replicação. Nunca desative as trigger, pois certeza que vai dar merda. */ 
+	IF ( SELECT COALESCE( current_setting('sessao.usuario.replicacao', TRUE), '0') = '1' ) THEN RETURN NULL; END IF;
+
+	/* Passa por todas as tabelas relacionadas. */
+	FOREACH nome_tabela IN ARRAY lista_nomes_tabelas
+	LOOP
+		-- Verifique se existem registros na tabela relacionada.
+		EXECUTE 'SELECT 1 FROM ' || nome_tabela || ' WHERE id_' || TG_TABLE_NAME || ' = $1' INTO existente_relacionamento USING OLD.id;
+		
+		IF (existente_relacionamento) THEN
+			-- Mostra mensagem de erro se existir alguma tabela que use o registro.
+			RAISE EXCEPTION USING ERRCODE = '23503', MESSAGE = format('Não é possível excluir o registro com ID (%I). Este registro é utilizado na tabela %s, na coluna id_%s', OLD.id, nome_tabela, TG_TABLE_NAME);
+		END IF;
+	END LOOP;
+
+	RETURN OLD;
 END;]]> </definition>
 </function>
 
@@ -1094,7 +1225,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 		</idxelement>
 </index>
 
-<table name="cftpesso" layers="3" collapse-mode="2" max-obj-count="33" z-value="0">
+<table name="cftpesso" layers="3" collapse-mode="2" max-obj-count="38" z-value="0">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Tabela que concentra o cadastro de todas as pessoas físicas ou jurídicas. A ideia é salvar o cadastro de clientes, fornecedores, representantes, funcionários, etc, todos nesta tabela. O cadastro vai ser único e vai diferenciar no código de cada tipo, ou seja, o mesmo cpf/cnpj pode ter um código de cliente e outro código para fornecedor, mas o registro nesta tabela vai ser apenas um.]]> </comment>
@@ -1221,9 +1352,25 @@ Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest=2), não inform
 4. Divorciado - É a pessoa que teve homologado seu pedido de divórcio através da justiça, ou de uma escritura.
 5. Viúvo - É o indivíduo que o cônjuge (marido ou esposa) faleceu.]]> </comment>
 	</column>
-	<column name="casado_em">
+	<column name="casado_em" default-value="null">
 		<type name="public.dm_data" length="0"/>
 		<comment> <![CDATA[Data do casamento.]]> </comment>
+	</column>
+	<column name="nome_razao_social" not-null="true">
+		<type name="public.dm_nome" length="0"/>
+		<comment> <![CDATA[Nome completo da pessoa, ou a razão social completa quando for pessoa jurídica.]]> </comment>
+	</column>
+	<column name="apelino_fantasia" default-value="null">
+		<type name="public.dm_nome" length="0"/>
+		<comment> <![CDATA[Apelido que a pessoa física possui ou a fantasia quando for pessoa jurídica.]]> </comment>
+	</column>
+	<column name="email_login" default-value="null">
+		<type name="public.dm_email" length="0"/>
+		<comment> <![CDATA[Endereço de e-mail principal de cada pessoa, seja física ou jurídica, para efetuar login nos aplicativos/sites que vão ser disponibilizados.]]> </comment>
+	</column>
+	<column name="senha_login_hash" default-value="null">
+		<type name="public.dm_senha_hash" length="0"/>
+		<comment> <![CDATA[Senha utilizada para efetura login nos aplicativos/sites que vão ser disponibilizados.]]> </comment>
 	</column>
 	<constraint name="pk_cftpesso_id" type="pk-constr" table="public.cftpesso">
 		<columns names="id" ref-type="src-columns"/>
@@ -1261,7 +1408,7 @@ Nota 3: No caso de Contribuinte Isento de Inscrição (indIEDest=2), não inform
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Tabela para salvar o cadastro de países.]]> </comment>
-	<position x="1480" y="620"/>
+	<position x="1440" y="620"/>
 	<column name="id" not-null="true">
 		<type name="smallserial" length="0"/>
 		<comment> <![CDATA[Identificador do registro.]]> </comment>
@@ -1345,7 +1492,7 @@ Estados Unidos da América = US
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Armazena os estados do país.]]> </comment>
-	<position x="1920" y="620"/>
+	<position x="1880" y="620"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 		<comment> <![CDATA[Identificador do registro.]]> </comment>
@@ -1430,7 +1577,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Armazena as cidades de cada estado.]]> </comment>
-	<position x="1480" y="1100"/>
+	<position x="1440" y="1100"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 		<comment> <![CDATA[Identificador do registro.]]> </comment>
@@ -1511,7 +1658,7 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment> <![CDATA[Concentra nesta tabela todos os endereços ligados a uma pessoa (cftpesso), esses endereços podem ser de cobrança, fatura, entrega, etc.]]> </comment>
-	<position x="1940" y="1100"/>
+	<position x="1900" y="1100"/>
 	<column name="id" not-null="true">
 		<type name="bigserial" length="0"/>
 		<comment> <![CDATA[Identificador do registro.]]> </comment>
@@ -1606,4 +1753,535 @@ Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
 
 	<expression type="check-exp"> <![CDATA[cep ~ '^[0-9]{8}$']]> </expression>
 </policy>
+<table name="aetcateg" layers="2" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Categoria do produto. Basicamente é uma forma de agrupar os produtos em uma categoria.]]> </comment>
+	<position x="2400" y="600"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="descricao_categoria" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição/nome da categoria.]]> </comment>
+	</column>
+	<constraint name="pk_aetcateg_id" type="pk-constr" table="public.aetcateg">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetcateg" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetcateg">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetcateg" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetcateg">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetcateg_alterado_em" table="public.aetcateg"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aetgrupo" layers="2" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Grupo das categorias. Nesta tabela é para auxiliar a tabela de categorias onde uma categoria pode ter vários grupos.]]> </comment>
+	<position x="2420" y="960"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_aetcateg" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID da categoria que pertence o grupo.]]> </comment>
+	</column>
+	<column name="descricao_grupo" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição/Nome do grupo.]]> </comment>
+	</column>
+	<constraint name="pk_aetgrupo_id" type="pk-constr" table="public.aetgrupo">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetgrupo" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetgrupo">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetgrupo" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetgrupo">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetgrupo_alterado_em" table="public.aetgrupo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aetsubgr" layers="2" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Subgrupo de grupo de categorias.]]> </comment>
+	<position x="2420" y="1340"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_aetgrupo" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do grupo.]]> </comment>
+	</column>
+	<column name="descricao_subgrupo" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição do subgrupo.]]> </comment>
+	</column>
+	<constraint name="pk_aetsubgr_id" type="pk-constr" table="public.aetsubgr">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetsubgr" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetsubgr">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetsubgr" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetsubgr">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetsubgr_alterado_em" table="public.aetsubgr"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aetunida" layers="2" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Unidade de Venda, vai se concentrar aqui todas as unidades de medidas existentes para vendas como por exemplo Unidade, Quilograma, Dúzia, Litro, Metro, etc.]]> </comment>
+	<position x="2420" y="2040"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="sigla_unidade" not-null="true">
+		<type name="public.dm_sigla_unidade" length="0"/>
+		<comment> <![CDATA[Sigla a ser usada na unidade.]]> </comment>
+	</column>
+	<column name="descricao_unidade" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição completa da unidade.]]> </comment>
+	</column>
+	<constraint name="pk_aetunida_id" type="pk-constr" table="public.aetunida">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetprodu" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetprodu">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetprodu" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetprodu">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetprodu_alterado_em" table="public.aetprodu"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aetmarca" layers="2" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2420" y="1700"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="descricao_marca" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição/Nome da marca de produtos.]]> </comment>
+	</column>
+	<constraint name="pk_aetmarca_id" type="pk-constr" table="public.aetmarca">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetmarca" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetmarca">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetmarca" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetmarca">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetmarca_alterado_em" table="public.aetmarca"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<sequence name="seq_cftpesso_fornecedor" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<trigger name="bef_i_u_aetunida" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetunida">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetunida" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetunida">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetunida_alterado_em" table="public.aetunida"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aettpgra" layers="2" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Tripo de grade. A grade de produtos é um recurso utilizado para classificar produtos em estoque. Ela é composta por tipos de grade, que podem ser cor, tamanho, voltagem, etc. Cada tipo de grade pode ter valores permitidos, como preto, marrom, azul, etc. As grades são usadas para acrescentar e agrupar informações repetitivas na descrição de um produto, de forma a padronizar a nomenclatura e permitir classificar produtos com características parecidas dentro de um cadastro de produto apenas . Por exemplo, para cadastrar um item de calçado, é necessário informar o nome, modelo, cor e número do calçado. Neste caso, modelo, cor e número são tipos de grades.]]> </comment>
+	<position x="3320" y="600"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="descricao_tipo_grade" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição/Nome do tipo de grade.]]> </comment>
+	</column>
+	<constraint name="pk_aettpgra_id" type="pk-constr" table="public.aettpgra">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aettpgra" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aettpgra">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aettpgra" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aettpgra">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aettpgra_alterado_em" table="public.aettpgra"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<table name="aetgrade" layers="2" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment> <![CDATA[Grade dos produtos. Nesta tabela é para salvar os detalhes de cada tripo de grade. As grades são usadas para acrescentar e agrupar informações repetitivas na descrição de um produto, de forma a padronizar a nomenclatura e permitir classificar produtos com características parecidas dentro de um cadastro de produto apenas. Por exemplo, para cadastrar um item de calçado, é necessário informar as cores que o mesmo tem, e os tamanhos para cada tipo de grade.]]> </comment>
+	<position x="3340" y="960"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+		<comment> <![CDATA[Identificador do registro.]]> </comment>
+	</column>
+	<column name="uuid" not-null="true">
+		<type name="public.dm_uuid" length="0"/>
+		<comment> <![CDATA[Código único para para cada registro. Usado em controle interno e processos avançados.]]> </comment>
+	</column>
+	<column name="criado_em" not-null="true">
+		<type name="public.dm_criado_em" length="0"/>
+		<comment> <![CDATA[Data e hora que o registro foi criado.]]> </comment>
+	</column>
+	<column name="criado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do Usuário interno que criou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi inserido direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="criado_usuario" not-null="true">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Usuário do banco de dados que criou o registro.]]> </comment>
+	</column>
+	<column name="alterado_em" default-value="null">
+		<type name="public.dm_data_hora" length="0"/>
+		<comment> <![CDATA[Data e hora da última alteração do registro.]]> </comment>
+	</column>
+	<column name="alterado_por" default-value="null">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do último Usuário interno que alterou o registro. O usuário interno é o que está cadastrado na tabela astusuar.
+Quando nulo signifca que foi alterado direto pelo banco de dados.]]> </comment>
+	</column>
+	<column name="alterado_usuario" default-value="null">
+		<type name="public.dm_usuario_banco" length="0"/>
+		<comment> <![CDATA[Último usuário do banco de dados que fez alteração no registro.]]> </comment>
+	</column>
+	<column name="id_aettpgra" not-null="true">
+		<type name="public.dm_id" length="0"/>
+		<comment> <![CDATA[ID do tipo de grade que pertence essa descrição de grade.]]> </comment>
+	</column>
+	<column name="descricao_grade" not-null="true">
+		<type name="public.dm_descricao" length="0"/>
+		<comment> <![CDATA[Descrição/Nome da grade.]]> </comment>
+	</column>
+	<constraint name="pk_aetgrade_id" type="pk-constr" table="public.aetgrade">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<trigger name="bef_i_u_aetgrade" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.aetgrade">
+		<function signature="public.fun_trg_antes_atualizar_todas_tabelas()"/>
+</trigger>
+
+<trigger name="aft_u_d_log_aetgrade" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.aetgrade">
+		<function signature="public.fun_trg_gera_logger_todas_tabelas()"/>
+</trigger>
+
+<index name="index_aetgrade_alterado_em" table="public.aetgrade"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="alterado_em"/>
+		</idxelement>
+	<columns names="alterado_em"/>
+</index>
+
+<trigger name="bef_d_nao_exc_id_aettpgra" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="false" trunc-event="false" arguments="{&quot;aetgrade&quot;}"
+	 table="public.aettpgra">
+		<comment> <![CDATA[O objetivo principal dessa trigger é garantir que não ocorram exclusões acidentais que quebrariam a integridade dos dados, mantendo a consistência dos relacionamentos de chave estrangeira.]]> </comment>
+		<function signature="public.fun_trg_impedir_exclusao_id_referenciado()"/>
+</trigger>
+
 </dbmodel>
