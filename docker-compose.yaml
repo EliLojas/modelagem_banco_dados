@@ -24,6 +24,17 @@ services:
       - local
     command: [ "postgres", "-c", "log_statement=all" ]
 
+  docusaurus:
+    image: node:lts-alpine
+    volumes:
+      - ./doc-modelagem_banco_dados:/app
+    working_dir: /app
+    command: >
+      sh -c "npm install &&
+               npm start"
+    ports:
+      - 3000:3000
+
 networks:
   local:
     driver: bridge
