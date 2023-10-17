@@ -32,3 +32,6 @@ Pronto, agora você consegue acessar o site da documentação, basta acessar pel
 ## Criar documentação
 
 Agora veja a documentação padrão para criar indo em [Tutorial - Basics](./category/tutorial---basics), ou vá para o site da [docusaurus](https://docusaurus.io/docs).
+
+
+Tem um execelente vídeo falando a respeito do docusaurus no [Create and deploy a documentation website](https://www.youtube.com/watch?v=UoAD_F8wuQk). É em inglês, mas basta ativar a legenda que está bem descrita e detalhada em português.

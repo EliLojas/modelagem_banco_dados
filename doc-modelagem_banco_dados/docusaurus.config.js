@@ -3,6 +3,8 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const nomeOrganizacao = "ONiNove";
+const nomeProjeto = "modelagem_banco_dados";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -11,14 +13,14 @@ const config = {
   favicon: 'img/i9.ico',
 
   // Set the production url of your site here
-  url: 'https://oninove.github.io',
+  url: `https://${nomeOrganizacao}.github.io`,
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/modelagem_banco_dados',
+  baseUrl: `/${nomeProjeto}`,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'ONi9', // Usually your GitHub org/user name.
+  organizationName: 'ONiNove', // Usually your GitHub org/user name.
   projectName: 'modelagem_banco_dados', // Usually your repo name.
 
   onBrokenLinks: 'throw',
@@ -42,14 +44,14 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            `https://github.com/${nomeOrganizacao}/${nomeProjeto}/tree/main/`,
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            `https://github.com/${nomeOrganizacao}/${nomeProjeto}/tree/main/`,
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -82,7 +84,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://github.com/ONiNove/modelagem_banco_dados',
+            href: `https://github.com/${nomeOrganizacao}/${nomeProjeto}`,
             label: 'GitHub',
             position: 'right',
           },
@@ -122,7 +124,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/ONiNove/modelagem_banco_dados',
+                href: `https://github.com/${nomeOrganizacao}/${nomeProjeto}`,
               },
             ],
           },

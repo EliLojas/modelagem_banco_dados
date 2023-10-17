@@ -14,6 +14,8 @@ function HomepageHeader() {
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p>Documentação da estrutura do banco de dados a ser usado. 
+          A ideia é documentar o máximo possível a estrutura do banco.</p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
