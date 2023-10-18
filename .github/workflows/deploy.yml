@@ -5,26 +5,24 @@ on:
     branches:
       - main
 
-
 jobs:
   deploy:
     name: Deploy para GitHub Pages
     runs-on: ubuntu-latest
     permissions:
-        contents: write
+      contents: write
     defaults:
-        run:
-            working-directory: doc-modelagem_banco_dados
-    
+      run:
+        working-directory: doc-modelagem_banco_dados
+
     steps:
       - name: Checagem do código
         uses: actions/checkout@v3
 
-
       - name: Configurando o Noje.js
         uses: actions/setup-node@v3
         with:
-            node-version: 18
+          node-version: 18
 
       - name: Instalando dependências
         run: npm install
@@ -37,7 +35,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./doc-modelagem_banco_dados/build
 
     #   - name: Upload artifact
     #     uses: actions/upload-pages-artifact@v2
