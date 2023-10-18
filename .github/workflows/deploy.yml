@@ -21,7 +21,7 @@ jobs:
       - name: Configurando o Noje.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+            node-version: 18
 
       - name: Instalando dependências
         run: |
@@ -29,14 +29,16 @@ jobs:
             npm install
 
       - name: Build do site com documentação 🚀
-        run: npm run build
+        run: |
+            cd doc-modelagem_banco_dados
+            npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
           # 👇 Specify build output path
           branch: main
-          path: .docs
+          path: ./doc-modelagem_banco_dados/build
           name: page
           if-no-files-found: error
 
