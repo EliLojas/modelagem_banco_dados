@@ -1,0 +1,8 @@
+{
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"files.trimTrailingWhitespace": false,
+"editor.renderWhitespace": "all",
+"editor.formatOnSaveMode": "modifications",
+"editor.formatOnSave": true,
+"typescript.format.enable": true
+}
