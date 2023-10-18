@@ -5,13 +5,16 @@ on:
     branches:
       - main
 
-permissions:
-    contents: write
 
 jobs:
   deploy:
     name: Deploy para GitHub Pages
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
+    defaults:
+        run:
+            working-directory: doc-modelagem_banco_dados
     
     steps:
       - name: Checagem do código
@@ -24,25 +27,28 @@ jobs:
             node-version: 18
 
       - name: Instalando dependências
-        run: |
-            cd doc-modelagem_banco_dados
-            npm install
+        run: npm install
 
       - name: Build do site com documentação 🚀
-        run: |
-            cd doc-modelagem_banco_dados
-            npm run build
+        run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
         with:
-          # 👇 Specify build output path
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          path: ./doc-modelagem_banco_dados/build
-          name: page
-          if-no-files-found: error
+          publish_dir: ./modelagem_banco_dados/build
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    #   - name: Upload artifact
+    #     uses: actions/upload-pages-artifact@v2
+    #     with:
+    #       # 👇 Specify build output path
+    #       github_token: ${{ secrets.GITHUB_TOKEN }}
+    #       branch: main
+    #       path: ./doc-modelagem_banco_dados/build
+    #       name: page
+    #       if-no-files-found: error
+
+    #   - name: Deploy to GitHub Pages
+    #     id: deployment
+    #     uses: actions/deploy-pages@v2
