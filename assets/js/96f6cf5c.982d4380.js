@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdoc_modelagem_banco_dados=self.webpackChunkdoc_modelagem_banco_dados||[]).push([[1638],{455:a=>{a.exports=JSON.parse('{"label":"facebook","permalink":"/modelagem_banco_dados/blog/tags/facebook","allTagsPath":"/modelagem_banco_dados/blog/tags","count":1}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdoc_modelagem_banco_dados=self.webpackChunkdoc_modelagem_banco_dados||[]).push([[9686],{3769:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
