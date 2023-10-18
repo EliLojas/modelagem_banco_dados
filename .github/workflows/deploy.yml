@@ -1,0 +1,43 @@
+name: Deploy para GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy para GitHub Pages
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checagem do código
+        uses: actions/checkout@v3
+
+
+      - name: Configurando o Noje.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalando dependências
+        run: npm install
+
+      - name: Build do site com documentação 🚀
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # 👇 Specify build output path
+          branch: main
+          path: .docs
+          name: page
+          if-no-files-found: error
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
