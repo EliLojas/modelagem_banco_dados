@@ -24,7 +24,9 @@ jobs:
           node-version: 18
 
       - name: Instalando dependências
-        run: npm install
+        run: |
+            cd doc-modelagem_banco_dados
+            npm install
 
       - name: Build do site com documentação 🚀
         run: npm run build
