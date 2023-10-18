@@ -37,7 +37,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./modelagem_banco_dados/build
+          publish_branch: main
+          publish_dir: ./docs
 
     #   - name: Upload artifact
     #     uses: actions/upload-pages-artifact@v2
