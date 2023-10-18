@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write
+    contents: write
 
 jobs:
   deploy:
@@ -37,6 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           # 👇 Specify build output path
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
           path: ./doc-modelagem_banco_dados/build
           name: page
