@@ -1,0 +1,8 @@
+{
+  "label": "Objetos Existentes do Banco de Dados",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Todos os objetos que existe dentro do banco de dados que devem estar presente em produção."
+  }
+}
