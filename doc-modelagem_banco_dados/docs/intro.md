@@ -35,3 +35,7 @@ Agora veja a documentação padrão para criar indo em [Tutorial - Basics](./cat
 
 
 Tem um execelente vídeo falando a respeito do docusaurus no [Create and deploy a documentation website](https://www.youtube.com/watch?v=UoAD_F8wuQk). É em inglês, mas basta ativar a legenda que está bem descrita e detalhada em português.
+
+:::tip
+Pra ir diretamente para documentação do banco de dados pode pular diretamente para [Padrões do Banco de Dados](./category/padrões-do-banco-de-dados).
+:::
